@@ -117,7 +117,7 @@ def main():
 
             for product_link in product_links:
                 product_name, product_status, image_url = extract_product_details(product_link)
-                if product_name and product_name == "ايسي رش":
+                if product_name and product_name == "إيدجي منت":
                     if product_status in ["متوفر", "سيتم توفيرها في المخزون قريباً"]:
                        
                        if last_sent!=last_perv_sent :
