@@ -102,22 +102,17 @@ def send_product_data_to_telegram(product_name, product_status, image_url, produ
 # Main function to run the code
 def main():
     global last_sent_status
+    url = "https://www.dzrt.com/ar/icy-rush.html"
 
     while True:
-        url = "https://www.dzrt.com/ar/our-products.html"
         html_content = fetch_url_with_retry(url)
         if html_content:
-            soup = BeautifulSoup(html_content, "html.parser")
-            product_links = [a["href"] for a in soup.find_all("a", class_="product-item-link")]
-
-            for product_link in product_links:
-                product_name, product_status, image_url = extract_product_details(product_link)
-                if product_name and product_name == "ايسي رش":
-                    if product_status in ["متوفر", "سيتم توفيرها في المخزون قريباً"]:
-                        if product_status != last_sent_status:
-                            send_product_data_to_telegram(product_name, product_status, image_url, product_link)
-                            last_sent_status = product_status
-                    break
+            product_name, product_status, image_url = extract_product_details(url)
+            if product_name and product_name == "ايسي رش":
+                if product_status in ["متوفر", "سيتم توفيرها في المخزون قريبًا"]:
+                    if product_status != last_sent_status:
+                        send_product_data_to_telegram(product_name, product_status, image_url, url)
+                        last_sent_status = product_status
 
         # Wait for 20 seconds before checking again
         time.sleep(20)
