@@ -97,7 +97,7 @@ def send_product_data_to_telegram(product_name, product_status, image_url, produ
 # Main function to run the code
 def main():
     global last_sent_status
-    https://www.dzrt.com/ar/icy-rush.html
+    url ='https://www.dzrt.com/ar/icy-rush.html'
     while True:
         html_content = fetch_url_with_retry(url)
         if html_content:
