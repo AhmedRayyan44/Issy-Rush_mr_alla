@@ -84,7 +84,7 @@ def send_product_data_to_telegram(product_name, product_status, image_url, produ
 
     message_text = f"Product Name: {product_name}\nProduct Status: {product_status}"
     reply_markup = {
-        [{"text": "View Product", "url": product_url}],
+        [{"text": "View Product", "url": product_link}],
        
     }
     params = {
