@@ -74,20 +74,30 @@ def send_product_data_to_telegram(product_name, product_status, image_url, produ
     chat_id = "-1002165666496"
     telegram_api_url = f"https://api.telegram.org/bot{bot_token}/sendPhoto"
     message_text = f"Product Name: {product_name}\nProduct Status: {product_status}"
-    reply_markup = {
-        "inline_keyboard": [
-            [{"text": "عرض المنتج", "url": product_link}],
-            [{"text": "عرض السلة", "url": "https://www.dzrt.com/ar/checkout/cart"}],
-            [{"text": "تسجيل الدخول", "url": "https://www.dzrt.com/ar/customer/account/login/"}],
-            [{"text": "الانتقال إلى رابط الدفع النهائي", "url": "https://www.dzrt.com/ar/onestepcheckout.html"}]
-        ]
-    }
-    params = {
-        "chat_id": chat_id,
-        "photo": image_url,
-        "caption": message_text,
-        "reply_markup": json.dumps(reply_markup)
-    }
+    
+    # Exclude inline keyboard if the product status is "متوفر" or "سيتم توفيرها في المخزون قريباً"
+    if product_status  in ["متوفر"]:
+        reply_markup = {
+            "inline_keyboard": [
+                [{"text": "عرض المنتج", "url": product_link}],
+                [{"text": "عرض السلة", "url": "https://www.dzrt.com/ar/checkout/cart"}],
+                [{"text": "تسجيل الدخول", "url": "https://www.dzrt.com/ar/customer/account/login/"}],
+                [{"text": "الانتقال إلى رابط الدفع النهائي", "url": "https://www.dzrt.com/ar/onestepcheckout.html"}]
+            ]
+        }
+        params = {
+            "chat_id": chat_id,
+            "photo": image_url,
+            "caption": message_text,
+            "reply_markup": json.dumps(reply_markup)
+        }
+    else:
+        params = {
+            "chat_id": chat_id,
+            "photo": image_url,
+            "caption": message_text
+        }
+
     response = requests.post(telegram_api_url, params=params)
     if response.status_code == 200:
         print(f"Product data sent successfully for {product_name}")
@@ -97,13 +107,13 @@ def send_product_data_to_telegram(product_name, product_status, image_url, produ
 # Main function to run the code
 def main():
     global last_sent_status
-    url ='https://www.dzrt.com/ar/icy-rush.html'
+    url = "https://www.dzrt.com/ar/icy-rush.html"
     while True:
         html_content = fetch_url_with_retry(url)
         if html_content:
             product_name, product_status, image_url = extract_product_details(url)
             if product_name and product_name == "ايسي رش":
-                if product_status in ["متوفر", "سيتم توفيرها في المخزون قريبًا"]:
+                if product_status in ["متوفر", "سيتم توفيرها في المخزون قريباً"]:
                     if product_status != last_sent_status:
                         send_product_data_to_telegram(product_name, product_status, image_url, url)
                         last_sent_status = product_status
